@@ -27,7 +27,7 @@ jobs:
         with:
           github_pat: ${{ secrets.HUB_PAT }}
 
-  build-packages: &run-job
+  build-packages:
     needs: discover
     strategy:
       matrix:
