@@ -126,7 +126,7 @@ in {
 
       wrapProgram $out/bin/darktop \
        --add-flags "$out/bin/sway"
-
+      (cd $out && ${pkgs.zip}/bin/zip -r $out/darktop.zip etc/ bin/)
     '';
     #     --run "${python-pkgs}/bin/python ${layout}"
   };
