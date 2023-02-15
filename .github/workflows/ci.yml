@@ -30,7 +30,6 @@ jobs:
   build-packages:
     needs: discover
     strategy:
-      fail-fast: false
       matrix:
         target: ${{ fromJSON(needs.discover.outputs.hits).packages.build }}
     name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
@@ -52,7 +51,6 @@ jobs:
     name: Upload release binaries
     needs: build-packages
     strategy:
-      fail-fast: false
       matrix:
         target: ${{ fromJSON(needs.discover.outputs.hits).packages.build }}
     permissions:
