@@ -32,7 +32,7 @@ jobs:
       - name: print log
         run: |
           >&2 echo "log:"
-          >&2 cat "${{ needs.discover.outputs.hits }}"
+          >&2 cat "${{ discovery.outputs.hits }}"
 
 
   build-packages:
@@ -40,34 +40,8 @@ jobs:
     if: ${{ always() }}
     strategy:
       matrix:
-        target: ${{ fromJSON(needs.discovery.outputs.hits).desktops.build }}
+        target: ${{ fromJSON(needs.discover.outputs.hits) }}
     name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
     runs-on: ubuntu-latest
     steps:
-      - uses: divnix/std-action/run@main
-        with:
-          extra_nix_config: |
-            ${{ needs.discover.outputs.nix_conf }}
-          json: ${{ toJSON(matrix.target) }}
-          # optional:
-          github_pat: ${{ secrets.HUB_PAT }}
-  upload:
-    name: Upload release binaries
-    needs: build-packages
-    if: ${{ always() }}
-    strategy:
-      matrix:
-        target: ${{ fromJSON(needs.discovery.outputs.hits).desktops.build }}
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download workflow artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: darktop.zip
-      - name: Upload release artifacts
-        run: gh release upload "$GITHUB_REF_NAME" *.zip
-        env:
-          GH_REPO: ${{ github.repository }}
-          GH_TOKEN: ${{ github.token }}
+      - run: echo ${{ matrix }}
