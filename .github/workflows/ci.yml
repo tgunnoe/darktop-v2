@@ -29,10 +29,7 @@ jobs:
 
   build-packages:
     needs: discover
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.target.cell }}.${{ matrix.target.block }}.${{ matrix.target.name }}
-      cancel-in-progress: false
-    if: fromJSON(needs.discover.outputs.hits).desktops.build != ''
+    if: ${{ always() }}
     strategy:
       fail-fast: false
       matrix:
