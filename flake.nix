@@ -13,7 +13,6 @@
       url = "github:guibou/nixGL";
       inputs.nixpkgs.follows = "std/nixpkgs";
     };
-    capsules.url = "github:input-output-hk/devshell-capsules";
   };
 
   outputs = {
