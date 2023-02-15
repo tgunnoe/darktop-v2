@@ -30,6 +30,10 @@ jobs:
   build-packages:
     needs: discover
     if: ${{ always() }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
     name: 'build-darktop'
     runs-on: ubuntu-latest
     steps:
