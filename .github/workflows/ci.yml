@@ -29,10 +29,12 @@ jobs:
 
   build-packages:
     needs: discover
+    if: fromJSON(needs.discover.outputs.hits).packages.build != ''
     strategy:
+      fail-fast: false
       matrix:
         target: ${{ fromJSON(needs.discover.outputs.hits).packages.build }}
-    name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
+    name: ${{ matrix.target.action }}->${{ matrix.target.cell }}.${{ matrix.target.block }}.${{ matrix.target.name }}
     runs-on: ubuntu-latest
     steps:
       - uses: divnix/std-action/run@main
@@ -42,11 +44,6 @@ jobs:
           json: ${{ toJSON(matrix.target) }}
           # optional:
           github_pat: ${{ secrets.HUB_PAT }}
-          nix_key: ${{ secrets.NIX_SECRET_KEY }}
-          nix_ssh_key: ${{ secrets.NIXBUILD_SSH }}
-          cache: s3://nix?endpoint=sfo3.digitaloceanspaces.com
-          builder: ssh-ng://eu.nixbuild.net
-          ssh_known_hosts: "eu.nixbuild.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM"
   upload:
     name: Upload release binaries
     needs: build-packages
