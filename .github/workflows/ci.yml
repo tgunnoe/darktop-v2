@@ -32,7 +32,7 @@ jobs:
       - name: print log
         run: |
           >&2 echo "log:"
-          >&2 cat "${{ outputs.hits }}"
+          >&2 cat "${{ needs.discover.outputs.hits }}"
 
 
   build-packages:
