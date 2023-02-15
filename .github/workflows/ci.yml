@@ -29,11 +29,6 @@ jobs:
         id: discovery
         with:
           github_pat: ${{ secrets.HUB_PAT }}
-      - name: print log
-        run: |
-          >&2 echo "log:"
-          >&2 cat "${{ discovery.outputs.hits }}"
-
 
   build-packages:
     needs: discover
