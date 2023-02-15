@@ -29,9 +29,7 @@ jobs:
         id: discovery
         with:
           github_pat: ${{ secrets.HUB_PAT }}
-          steps:
-      - run: echo ${{ outputs.hits }}
-
+      - run: echo ${{ fromJSON(needs.discover.outputs.hits) }}
 
   build-packages:
     needs: discover
