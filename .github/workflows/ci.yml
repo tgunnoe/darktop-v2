@@ -5,7 +5,10 @@ on:
     branches:
       - master
   workflow_dispatch:
-
+    release_tag:
+      description: "Release tag"
+      default: false
+      type: boolean
 permissions:
   contents: read
 
@@ -26,13 +29,18 @@ jobs:
         id: discovery
         with:
           github_pat: ${{ secrets.HUB_PAT }}
+      - name: print log
+        run: |
+          >&2 echo "log:"
+          >&2 cat "${{ outputs.hits }}"
+
 
   build-packages:
     needs: discover
     if: ${{ always() }}
     strategy:
       matrix:
-        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
+        target: ${{ fromJSON(needs.discovery.outputs.hits).desktops.build }}
     name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
     runs-on: ubuntu-latest
     steps:
@@ -49,7 +57,7 @@ jobs:
     if: ${{ always() }}
     strategy:
       matrix:
-        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
+        target: ${{ fromJSON(needs.discovery.outputs.hits).desktops.build }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
