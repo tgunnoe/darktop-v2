@@ -28,7 +28,6 @@ jobs:
           github_pat: ${{ secrets.HUB_PAT }}
 
   build-packages:
-    if: always() && fromJSON(needs.discover.outputs.hits).packages.build != '' && github.ref_name == 'master' && github.event_name != 'workflow_dispatch'
     needs: discover
     strategy:
       fail-fast: false
@@ -54,7 +53,8 @@ jobs:
     needs: build-packages
     strategy:
       matrix:
-        target: ${{ fromJSON(needs.discover.outputs.hits).containers.publish }}
+        fail-fast: false
+        target: ${{ fromJSON(needs.discover.outputs.hits).packages.build }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
