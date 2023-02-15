@@ -29,6 +29,9 @@ jobs:
 
   build-packages:
     needs: discover
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.target.cell }}.${{ matrix.target.block }}.${{ matrix.target.name }}
+      cancel-in-progress: false
     if: fromJSON(needs.discover.outputs.hits).packages.build != ''
     strategy:
       fail-fast: false
