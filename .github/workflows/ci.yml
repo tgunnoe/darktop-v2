@@ -34,7 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         target: ${{ fromJSON(needs.discover.outputs.hits).packages.build }}
-    name: ${{ matrix.target.action }}->${{ matrix.target.cell }}.${{ matrix.target.block }}.${{ matrix.target.name }}
+    name: 'build-darktop'
     runs-on: ubuntu-latest
     steps:
       - uses: divnix/std-action/run@main
