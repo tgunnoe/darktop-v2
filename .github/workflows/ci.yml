@@ -49,6 +49,7 @@ jobs:
           builder: ssh-ng://eu.nixbuild.net
           ssh_known_hosts: "eu.nixbuild.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM"
   upload:
+    <<: *run-job
     name: Upload release binaries
     needs: build-packages
     strategy:
