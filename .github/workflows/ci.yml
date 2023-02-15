@@ -1,9 +1,9 @@
-name: Standard CI
+name: Darktop Standard CI
 
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 permissions:
