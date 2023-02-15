@@ -24,8 +24,8 @@
       inherit inputs;
       cellsFrom = ./src;
       cellBlocks = with std.blockTypes; [
-        (installables "packages" {ci.build = true;})
-        (installables "desktops" {ci.build = true;})
+        #(installables "packages" {ci.build = true;})
+        (installables "desktops" {ci.build = true; ci.publish = true;})
         (devshells "devshells" {ci.build = true;})
       ];
     }
