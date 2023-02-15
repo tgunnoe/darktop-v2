@@ -94,7 +94,7 @@
         zsh
         ranger
         #pcmanfm
-        mpv
+        #mpv
         autotiling
         #vlc
         #python-pkgs
