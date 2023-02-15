@@ -35,7 +35,6 @@ jobs:
     steps:
       - run: echo ${{ matrix.project }}
       - run: echo ${{ matrix.config }}
-    steps:
       - uses: divnix/std-action/run@main
         with:
           extra_nix_config: |
