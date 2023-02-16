@@ -31,10 +31,21 @@ jobs:
           github_pat: ${{ secrets.HUB_PAT }}
 
   build-packages:
+    permissions:
+      id-token: write
+      contents: read
     needs: discover
     if: ${{ always() }}
     strategy:
       matrix:
-        target: ${{ fromJSON(needs.discover.outputs.hits) }}
+        target: ${{ fromJSON(needs.discover.outputs.hits).desktops }}
     name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
     runs-on: ubuntu-latest
+    steps:
+      - uses: divnix/std-action/run@v0.0.7
+        with:
+          extra_nix_config: |
+            ${{ needs.discover.outputs.nix_conf }}
+          json: ${{ toJSON(matrix.target) }}
+          # optional:
+          github_pat: ${{ secrets.HUB_PAT }}
