@@ -56,5 +56,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}-outputs
-          path: *
           retention-days: 7
