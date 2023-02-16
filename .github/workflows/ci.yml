@@ -59,11 +59,11 @@ jobs:
           name: ${{matrix.target.name}}
           path: /**/${{matrix.target.name}}/${{matrix.target.name}}.zip
           retention-days: 7
-  upload:
+  release:
     permissions:
       id-token: write
       contents: write
-    name: Upload release binaries
+    name: Release artifacts
     needs: build-packages
     runs-on: ubuntu-latest
     steps:
@@ -74,8 +74,9 @@ jobs:
           path: ${{matrix.target.name}}
       - name: Display structure of downloaded files
         run: ls -R
-      - name: Upload release artifacts
-        run: gh release upload tttttt dark*
-        env:
-          GH_REPO: ${{ github.repository }}
-          GH_TOKEN: ${{ github.token }}
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.HUB_PAT }}
+          repository: tgunnoe/build-repo
+          event-type: release
