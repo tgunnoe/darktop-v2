@@ -54,6 +54,7 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}/result
+          readlink ${{ github.workspace }}/result
       - name: upload artifacts
         id: artifacts
         if: always()
