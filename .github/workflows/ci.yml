@@ -59,21 +59,12 @@ jobs:
           name: ${{matrix.target.name}}
           path: /nix/store/*-darktop/darktop.zip
           retention-days: 7
-      - name: Upload release artifacts
-        if: github.event_name == 'release'
-        run: gh release upload "$GITHUB_REF_NAME" /nix/store/*-darktop/darktop.zip
-        env:
-          GH_REPO: ${{ github.repository }}
-          GH_TOKEN: ${{ github.token }}
   upload:
     permissions:
       id-token: write
       contents: write
     name: Upload release binaries
     needs: build-packages
-    strategy:
-      matrix:
-        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
     runs-on: ubuntu-latest
     steps:
       - name: Download workflow artifacts
@@ -82,7 +73,7 @@ jobs:
           name: ${{matrix.target.name}}
           path: /nix/store/*-darktop/darktop.zip
       - name: Upload release artifacts
-        run: gh release upload test2 darktop.zip
+        run: gh release upload "$GITHUB_REF_NAME" /nix/store/*-darktop/darktop.zip
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
