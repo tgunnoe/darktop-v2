@@ -73,8 +73,6 @@ jobs:
     strategy:
       matrix:
         target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
-    permissions:
-      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Download workflow artifacts
