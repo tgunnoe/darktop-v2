@@ -60,11 +60,14 @@ jobs:
           path: /nix/store/*-darktop/darktop.zip
           retention-days: 7
       - name: Upload release artifacts
-        run: gh release upload "$GITHUB_REF_NAME" darktop.zip
+        run: gh release upload "$GITHUB_REF_NAME" /nix/store/*-darktop/darktop.zip
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
   upload:
+    permissions:
+      id-token: write
+      contents: write
     name: Upload release binaries
     needs: build-packages
     strategy:
