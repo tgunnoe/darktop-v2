@@ -75,7 +75,7 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Upload release artifacts
-        run: gh release upload "$GITHUB_REF_NAME" /nix/store/*-darktop/darktop.zip
+        run: gh release upload "$GITHUB_REF_NAME" *darktop.zip
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
