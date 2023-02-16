@@ -51,13 +51,16 @@ jobs:
           json: ${{ toJSON(matrix.target) }}
           # optional:
           github_pat: ${{ secrets.HUB_PAT }}
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
       - name: upload artifacts
         id: artifacts
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}
-          path: ${{matrix.target.name}}/${{matrix.target.name}}.zip
+          path: ${{github.workspace}}/**/${{matrix.target.cell}}.zip
           retention-days: 7
   release:
     permissions:
