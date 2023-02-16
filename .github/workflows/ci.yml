@@ -61,6 +61,9 @@ jobs:
   upload:
     name: Upload release binaries
     needs: build-packages
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -68,7 +71,8 @@ jobs:
       - name: Download workflow artifacts
         uses: actions/download-artifact@v2
         with:
-          name: darktop.zip
+          name: ${{matrix.target.name}}
+          path: /nix/store/*-darktop/darktop.zip
       - name: Upload release artifacts
         run: gh release upload "$GITHUB_REF_NAME" darktop.zip
         env:
