@@ -16,20 +16,19 @@ permissions:
 jobs:
 
   discover:
+    permissions:
+      contents: read
     outputs:
       hits: ${{ steps.discovery.outputs.hits }}
       nix_conf: ${{ steps.discovery.outputs.nix_conf }}
 
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}
     steps:
       - name: Standard Discovery
-        uses: divnix/std-action/discover@main
+        uses: divnix/std-action/discover@v0.0.7
         id: discovery
         with:
           github_pat: ${{ secrets.HUB_PAT }}
-      - run: echo ${{ fromJSON(needs.discover.outputs.hits) }}
 
   build-packages:
     needs: discover
@@ -39,5 +38,3 @@ jobs:
         target: ${{ fromJSON(needs.discover.outputs.hits) }}
     name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
     runs-on: ubuntu-latest
-    steps:
-      - run: echo ${{ matrix }}
