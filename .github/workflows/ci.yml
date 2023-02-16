@@ -72,6 +72,8 @@ jobs:
         with:
           name: ${{matrix.target.name}}
           path: darktop*
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Upload release artifacts
         run: gh release upload "$GITHUB_REF_NAME" /nix/store/*-darktop/darktop.zip
         env:
