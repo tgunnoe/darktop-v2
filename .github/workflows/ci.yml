@@ -60,6 +60,7 @@ jobs:
           path: /nix/store/*-darktop/darktop.zip
           retention-days: 7
       - name: Upload release artifacts
+        if: github.event_name == 'release'
         run: gh release upload "$GITHUB_REF_NAME" /nix/store/*-darktop/darktop.zip
         env:
           GH_REPO: ${{ github.repository }}
@@ -81,7 +82,7 @@ jobs:
           name: ${{matrix.target.name}}
           path: /nix/store/*-darktop/darktop.zip
       - name: Upload release artifacts
-        run: gh release upload "$GITHUB_REF_NAME" darktop.zip
+        run: gh release upload test2 darktop.zip
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
