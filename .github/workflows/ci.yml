@@ -9,6 +9,7 @@ on:
       description: "Release tag"
       default: false
       type: boolean
+
 permissions:
   contents: read
 
@@ -35,10 +36,10 @@ jobs:
       id-token: write
       contents: read
     needs: discover
-    if: ${{ always() }}
+    if: fromJSON(needs.discover.outputs.hits).desktops.build != ''
     strategy:
       matrix:
-        target: ${{ fromJSON(needs.discover.outputs.hits).desktops }}
+        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
     name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
     runs-on: ubuntu-latest
     steps:
