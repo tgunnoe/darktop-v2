@@ -34,7 +34,7 @@ jobs:
   build-packages:
     permissions:
       id-token: write
-      contents: read
+      contents: write
     needs: discover
     if: fromJSON(needs.discover.outputs.hits).desktops.build != ''
     strategy:
@@ -55,5 +55,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: ${{matrix.target.name}}-outputs
+          name: ${{matrix.target.name}}
+          path: /nix/store/*-build
           retention-days: 7
