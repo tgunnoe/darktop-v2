@@ -53,7 +53,7 @@ jobs:
           github_pat: ${{ secrets.HUB_PAT }}
       - name: List files in the repository
         run: |
-          ls ${{ github.workspace }}
+          ls ${{ github.workspace }}/result
       - name: upload artifacts
         id: artifacts
         if: always()
