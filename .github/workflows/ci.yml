@@ -52,12 +52,18 @@ jobs:
           # optional:
           github_pat: ${{ secrets.HUB_PAT }}
       - name: upload artifacts
+        id: artifacts
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}
           path: /nix/store/*-darktop/darktop.zip
           retention-days: 7
+      - name: Upload release artifacts
+        run: gh release upload "$GITHUB_REF_NAME" darktop.zip
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
   upload:
     name: Upload release binaries
     needs: build-packages
