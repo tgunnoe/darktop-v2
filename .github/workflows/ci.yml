@@ -50,3 +50,22 @@ jobs:
           json: ${{ toJSON(matrix.target) }}
           # optional:
           github_pat: ${{ secrets.HUB_PAT }}
+  upload:
+    name: Upload release binaries
+    needs: build-packages
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download workflow artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: darktop.zip
+      - name: Upload release artifacts
+        run: gh release upload "$GITHUB_REF_NAME" darktop.zip
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
