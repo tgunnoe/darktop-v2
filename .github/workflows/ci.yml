@@ -56,5 +56,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}
-          path: /nix/store/*-darktop
+          path: /nix/store/*-darktop/darktop.zip
           retention-days: 7
