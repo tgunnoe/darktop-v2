@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Standard Discovery
-        uses: divnix/std-action/discover@v0.0.7
+        uses: tgunnoe/std-action/discover@main
         id: discovery
         with:
           github_pat: ${{ secrets.HUB_PAT }}
@@ -42,7 +42,7 @@ jobs:
     name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
     runs-on: ubuntu-latest
     steps:
-      - uses: divnix/std-action/run@v0.0.7
+      - uses: tgunnoe/std-action/run@main
         with:
           extra_nix_config: |
             ${{ needs.discover.outputs.nix_conf }}

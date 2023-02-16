@@ -103,7 +103,7 @@
     toString pkgsList;
 in {
   #inherit (inputs.nixpkgs) hello;
-  default = pkgs.symlinkJoin {
+  dark = pkgs.symlinkJoin {
     name = "darktop";
     paths = with pkgs; [
       /*
@@ -129,5 +129,6 @@ in {
       (cd $out && ${pkgs.zip}/bin/zip -r $out/darktop.zip etc/ bin/)
     '';
     #     --run "${python-pkgs}/bin/python ${layout}"
+    meta.description = "A description.";
   };
 }
