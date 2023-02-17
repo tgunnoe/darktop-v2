@@ -79,7 +79,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}
-          path: ${{needs.build_matrix.outputs.artifact}}/${{matrix.target.cell}}.zip
+          path: ${{steps.define.result}}/${{matrix.target.cell}}.zip
           retention-days: 7
 
   release:
