@@ -36,6 +36,8 @@ jobs:
       id-token: write
       contents: write
     needs: discover
+    outputs:
+      artifact: ${{ steps.define.outputs.result }}
     if: fromJSON(needs.discover.outputs.hits).desktops.build != ''
     strategy:
       matrix:
@@ -52,16 +54,18 @@ jobs:
           # optional:
           github_pat: ${{ secrets.HUB_PAT }}
       - name: List files in the repository
+        id: define
         run: |
           ls -al
-          ``nix path-info ${{matrix.target.targetDrv}}
+          nix path-info ${{matrix.target.targetDrv}}
+          echo "result=$(nix path-info ${{matrix.target.targetDrv}})" >> "$GITHUB_OUTPUT"
       - name: upload artifacts
         id: artifacts
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}
-          path: ${{github.workspace}}/result/${{matrix.target.cell}}.zip
+          path: ${{outputs.artifact}}/result/${{matrix.target.cell}}.zip
           retention-days: 7
 
   release:
