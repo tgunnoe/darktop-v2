@@ -97,6 +97,11 @@ jobs:
           path: ${{matrix.target.name}}
       - name: Display structure of downloaded files
         run: ls -R
+      - name: Upload release artifacts
+        run: gh release upload "$GITHUB_REF_NAME" darktop*
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
