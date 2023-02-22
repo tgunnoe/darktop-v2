@@ -1,14 +1,12 @@
 name: Darktop Standard CI
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
     release_tag:
       description: "Release tag"
       default: false
       type: boolean
+  release:
 
 permissions:
   contents: read
