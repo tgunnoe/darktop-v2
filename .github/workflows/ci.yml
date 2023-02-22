@@ -98,7 +98,7 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Upload release artifacts
-        run: gh release upload "$GITHUB_REF_NAME" darktop*
+        run: gh release upload "$GITHUB_REF_NAME" dark/darktop*
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
