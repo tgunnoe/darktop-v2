@@ -1,0 +1,16 @@
+{
+    "layer": "top",
+    "position": "left",
+    "width": 60,
+    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-center": ["sway/window"],
+    "modules-right": ["clock", "custom/quit"],
+    "sway/window": {
+        "max-length": 50
+    },
+    "custom/quit": {
+       "format": "",
+       "on-click": "swaynag -f 'Terminus (TTF)'  -t warning -m 'Do you really want to exit sway?' -b 'Yes, exit sway' 'swaymsg exit'"
+      }
+
+}

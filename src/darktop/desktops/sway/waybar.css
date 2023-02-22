@@ -1,0 +1,70 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: monospace;
+    font-size: 12px;
+    min-height: 50px;
+}
+
+window#waybar {
+    background: transparent;
+    border: 2px solid #00a595;
+    color: #00a595;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    background: transparent;
+    color:#00a595;
+    border-bottom: 2px solid transparent;
+}
+
+#workspaces button.focused {
+    background: transparent;
+    border-bottom: 2px solid #00a595;
+}
+
+#mode, #clock, #battery {
+    padding: 0 10px;
+    margin: 0 5px;
+}
+
+#mode {
+    background: transparent;
+    border-top: 1px solid #00a595;
+    border-bottom: 1px solid #00a595;
+}
+
+#clock {
+    background-color: transparent;
+    border-top: 1px solid #00a595;
+    border-bottom: 1px solid #00a595;
+
+}
+
+#battery {
+    background-color: transparent;
+    color: #00a595;
+}
+
+#battery.charging {
+    color: white;
+    background-color: #26A65B;
+}
+
+@keyframes blink {
+    to {
+        background-color: #ffffff;
+        color: black;
+    }
+}
+
+#battery.warning:not(.charging) {
+    background: #f53c3c;
+    color: white;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
