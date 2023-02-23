@@ -28,21 +28,6 @@ jobs:
         id: discovery
         with:
           github_pat: ${{ secrets.HUB_PAT }}
-  build_matrix:
-    permissions:
-      contents: read
-    name: Render Build Matrix
-    outputs:
-      artifacts: ${{ steps.build.outputs.result }}
-    runs-on: ubuntu-latest
-    needs:
-      - discover
-    if: always()
-    steps:
-      - run: |
-          echo "result=$(nix path-info ${{matrix.target.targetDrv}})" >> "$GITHUB_OUTPUT"
-        id: build
-
   build-packages:
     permissions:
       id-token: write
@@ -69,7 +54,6 @@ jobs:
         id: define
         run: |
           nix path-info ${{matrix.target.targetDrv}}
-          ls -al ${{needs.build_matrix.outputs.artifact}}
           echo "result=$(nix path-info ${{matrix.target.targetDrv}})" >> "$GITHUB_OUTPUT"
       - name: upload artifacts
         id: artifacts
@@ -96,7 +80,7 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Upload release artifacts
-        run: gh release upload "$GITHUB_REF_NAME" dark/darktop*
+        run: gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/darktop*
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
