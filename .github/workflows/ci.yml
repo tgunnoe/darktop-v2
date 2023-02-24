@@ -7,7 +7,7 @@ on:
       default: false
       type: boolean
   release:
-
+    types: [published]
 permissions:
   contents: read
 
@@ -28,28 +28,12 @@ jobs:
         id: discovery
         with:
           github_pat: ${{ secrets.HUB_PAT }}
-  build_matrix:
-    permissions:
-      contents: read
-    name: Render Build Matrix
-    outputs:
-      artifacts: ${{ steps.build.outputs.result }}
-    runs-on: ubuntu-latest
-    needs:
-      - discover
-    if: always()
-    steps:
-      - run: |
-          echo "result=$(nix path-info ${{matrix.target.targetDrv}})" >> "$GITHUB_OUTPUT"
-        id: build
-
   build-packages:
     permissions:
       id-token: write
       contents: write
     needs:
       - discover
-      - build_matrix
     if: fromJSON(needs.discover.outputs.hits).desktops.build != ''
     strategy:
       matrix:
@@ -69,7 +53,6 @@ jobs:
         id: define
         run: |
           nix path-info ${{matrix.target.targetDrv}}
-          ls -al ${{needs.build_matrix.outputs.artifact}}
           echo "result=$(nix path-info ${{matrix.target.targetDrv}})" >> "$GITHUB_OUTPUT"
       - name: upload artifacts
         id: artifacts
@@ -77,7 +60,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}
-          path: ${{steps.define.outputs.result}}/${{matrix.target.cell}}.zip
+          path: ${{steps.define.outputs.result}}/
           retention-days: 7
 
   release:
@@ -85,7 +68,12 @@ jobs:
       id-token: write
       contents: write
     name: Release artifacts
-    needs: build-packages
+    needs:
+      - discover
+      - build-packages
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
     runs-on: ubuntu-latest
     steps:
       - name: Download workflow artifacts
@@ -96,10 +84,21 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Upload release artifacts
-        run: gh release upload "$GITHUB_REF_NAME" dark/darktop*
+        run: |
+          ls -al ${{matrix.target.name}}
+          tree .
+          gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
+      - name: Publish release to external repo
+        run: |
+          gh release create "$GITHUB_REF_NAME" --notes "Test"
+          gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip
+        env:
+          GH_REPO: github.com/tgunnoe/build-repo
+          GH_TOKEN: ${{ secrets.HUB_PAT }}
+
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
