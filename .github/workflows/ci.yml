@@ -106,8 +106,8 @@ jobs:
       - name: Publish release to external repo
         if: github.event.release.name != 'prereleased'
         run: |
-          gh release create "${{inputs.release_tag}}" --notes "Built from: ${{github.sha}}"
-          gh release upload "${{inputs.release_tag}}" ${{matrix.target.name}}/*.zip
+          gh release create "$GITHUB_REF_NAME" --notes "Built from: ${{github.sha}}"
+          gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip
         env:
           GH_REPO: github.com/tgunnoe/build-repo
           GH_TOKEN: ${{ secrets.HUB_PAT }}
