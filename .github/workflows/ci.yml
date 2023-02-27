@@ -7,7 +7,7 @@ on:
       default: false
       type: string
   release:
-    types: [published, prereleased]
+    types: [published]
 permissions:
   contents: read
 
@@ -89,7 +89,7 @@ jobs:
           gh release create "$GITHUB_REF_NAME" --notes 'Built from: ${{github.sha}}'
         env:
           GH_REPO: ${{ github.repository }}
-          GH_TOKEN: ${{ github.HUB_PAT }}
+          GH_TOKEN: ${{ github.token }}
           GH_SHA: ${{ github.sha }}
 
       - name: Upload release artifacts
