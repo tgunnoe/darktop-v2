@@ -104,9 +104,9 @@ jobs:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
       - name: Publish release to external repo
-        if: github.event.release.isPrerelease != true
+        if: github.event.action != 'prereleased'
         run: |
-          echo "${{github.event.release.prereleased}}"
+          echo "${{github.event.action}}"
           gh release create "$GITHUB_REF_NAME" --notes "Built from: ${{github.sha}}"
           gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip --clobber
         env:
