@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}
-          path: ${{steps.define.outputs.result}}/
+          path: ${{steps.define.outputs.result}}/*.tar.gz
           retention-days: 7
 
   release:
