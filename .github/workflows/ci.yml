@@ -100,6 +100,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
       - name: Publish release to external repo
+        if: github.event_name != 'release' && github.event.release.name != 'unpublished'
         run: |
           gh release create "$GITHUB_REF_NAME" --notes "${{github.sha}}"
           gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip
