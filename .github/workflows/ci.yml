@@ -1,0 +1,121 @@
+name: Darktop Standard CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag"
+        default: false
+        type: string
+  release:
+    types: [prereleased, released]
+permissions:
+  contents: read
+
+jobs:
+
+  discover:
+    permissions:
+      contents: read
+    outputs:
+      hits: ${{ steps.discovery.outputs.hits }}
+      nix_conf: ${{ steps.discovery.outputs.nix_conf }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Standard Discovery
+        uses: tgunnoe/std-action/discover@main
+        id: discovery
+        with:
+          github_pat: ${{ secrets.HUB_PAT }}
+
+  build-packages:
+    permissions:
+      id-token: write
+      contents: write
+    needs:
+      - discover
+    if: fromJSON(needs.discover.outputs.hits).desktops.build != ''
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
+    name: ${{ matrix.target.cell }} - ${{ matrix.target.name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tgunnoe/std-action/run@main
+        id: build
+        with:
+          extra_nix_config: |
+            ${{ needs.discover.outputs.nix_conf }}
+          json: ${{ toJSON(matrix.target) }}
+          # optional:
+          github_pat: ${{ secrets.HUB_PAT }}
+      - name: List files in the repository
+        id: define
+        run: |
+          nix path-info ${{matrix.target.targetDrv}}
+          echo "result=$(nix path-info ${{matrix.target.targetDrv}})" >> "$GITHUB_OUTPUT"
+      - name: upload artifacts
+        id: artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{matrix.target.name}}
+          path: ${{steps.define.outputs.result}}/*.zip
+          retention-days: 7
+
+  release:
+    permissions:
+      id-token: write
+      contents: write
+    name: Release artifacts
+    needs:
+      - discover
+      - build-packages
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download workflow artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{matrix.target.name}}
+          path: ${{matrix.target.name}}
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Create a new workflow release
+        if: github.event_name != 'release'
+        run: |
+          gh release create "${{inputs.release_tag}}" --notes 'Built from: ${{github.sha}}'
+          gh release upload "${{inputs.release_tag}}" ${{matrix.target.name}}/*.zip
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          GH_SHA: ${{ github.sha }}
+
+      - name: Upload to an existing release
+        if: github.event_name == 'release'
+        run: |
+          ls -al ${{matrix.target.name}}
+          tree .
+          gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip --clobber
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+      - name: Publish release to external repo
+        if: github.event.action != 'prereleased'
+        run: |
+          echo "${{github.event.action}}"
+          gh release create "$GITHUB_REF_NAME" --notes "Built from: ${{github.sha}}"
+          gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip --clobber
+        env:
+          GH_REPO: github.com/tgunnoe/build-repo
+          GH_TOKEN: ${{ secrets.HUB_PAT }}
+
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.HUB_PAT }}
+          repository: tgunnoe/build-repo
+          event-type: release

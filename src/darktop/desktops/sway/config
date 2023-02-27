@@ -1,0 +1,39 @@
+set $mod Mod1
+
+output * bg @background@ fill
+
+bindsym $mod+space exec @term@ --config @termconfig@
+bindsym $mod+Shift+q kill
+bindsym $mod+q split toggle
+bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit? This will end your session.' -b 'Yes, exit sway' 'swaymsg exit'
+bindsym --release button2 kill
+bindsym --whole-window $mod+button2 kill
+bindsym button9 move left
+bindsym button8 move right
+bindsym --release --border button3 kill
+
+gaps inner 10
+gaps outer 10
+default_border normal 2
+default_floating_border pixel 2
+
+# class                 border    backgr.   text      indicator child_border
+client.focused          #00a595ff #00000000 #ffffffff #00a595ff #00a595ff
+client.focused_inactive #00a595ff #00000000 #bbbbbbbb #00a595ff #00a595ff
+client.unfocused        #00a595ff #00000000 #999999aa #00a595ff #00a595ff
+input 0:0:wayland {
+      xkb_layout us(dvorak)
+}
+#exec conky --config=@conky-config@
+bar {
+    swaybar_command waybar --config @waybar@ --style @waybarstyle@
+}
+exec autotiling
+exec cage -- @term@ --config @termconfig@ -e bash --init-file @bashinit@
+exec @term@ --class ranger --title EXPLORER --config @termconfig@ -e ranger
+exec @term@ --class gocpu --title CPU --config @termconfig@ -e btm -C @btmcpu@
+exec @term@ --class goproc --title PROGRAMS --config @termconfig@ -e btm -C @btmproc@
+
+exec waybar --config @waybar@ --style @waybarstyle@
+
+exec python @loadlayout@ @layout@
