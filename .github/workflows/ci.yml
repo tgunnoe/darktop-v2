@@ -8,7 +8,7 @@ on:
         default: false
         type: string
   release:
-    types: [published]
+    types: [prereleased, released]
 permissions:
   contents: read
 
@@ -94,17 +94,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_SHA: ${{ github.sha }}
 
-      - name: Upload release artifacts
-        if: github.event_name != 'workflow_dispatch'
+      - name: Upload to an existing release
+        if: github.event_name == 'release'
         run: |
           ls -al ${{matrix.target.name}}
           tree .
-          gh release upload "${{inputs.release_tag}}" ${{matrix.target.name}}/*.zip
+          gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
       - name: Publish release to external repo
-        if: github.event_name != 'release' && github.event.release.name != 'prereleased'
+        if: github.event.release.name != 'prereleased'
         run: |
           gh release create "${{inputs.release_tag}}" --notes "Built from: ${{github.sha}}"
           gh release upload "${{inputs.release_tag}}" ${{matrix.target.name}}/*.zip
