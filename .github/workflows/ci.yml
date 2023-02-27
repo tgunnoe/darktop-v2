@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.target.name}}
-          path: ${{steps.define.outputs.result}}/*.tar.gz
+          path: ${{steps.define.outputs.result}}/*.zip
           retention-days: 7
 
   release:
@@ -84,16 +84,18 @@ jobs:
           path: ${{matrix.target.name}}
       - name: Display structure of downloaded files
         run: ls -R
-      - name: Create release
+      - name: Create a new workflow release
         if: github.event_name != 'release'
         run: |
           gh release create "${{inputs.release_tag}}" --notes 'Built from: ${{github.sha}}'
+          gh release upload "${{inputs.release_tag}}" ${{matrix.target.name}}/*.zip
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
           GH_SHA: ${{ github.sha }}
 
       - name: Upload release artifacts
+        if: github.event_name != 'workflow_dispatch'
         run: |
           ls -al ${{matrix.target.name}}
           tree .
