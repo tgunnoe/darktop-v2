@@ -97,7 +97,7 @@ jobs:
         run: |
           ls -al ${{matrix.target.name}}
           tree .
-          gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip
+          gh release upload "${{inputs.release_tag}}" ${{matrix.target.name}}/*.zip
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
