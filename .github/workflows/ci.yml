@@ -104,7 +104,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
       - name: Publish release to external repo
-        if: github.event.release.name != 'prereleased'
+        if: github.event_name == 'release' && github.event.release.name != 'prereleased'
         run: |
           gh release create "$GITHUB_REF_NAME" --notes "Built from: ${{github.sha}}"
           gh release upload "$GITHUB_REF_NAME" ${{matrix.target.name}}/*.zip
