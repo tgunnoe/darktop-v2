@@ -71,6 +71,7 @@ jobs:
     name: Release artifacts
     needs:
       - discover
+      - build-packages
     strategy:
       matrix:
         target: ${{ fromJSON(needs.discover.outputs.hits).desktops.build }}
